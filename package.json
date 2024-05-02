@@ -1,0 +1,12 @@
+{
+  "name": "ebnf-visualizer",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "link": "npm link @d3x0r/popups"
+  },
+  "author": "Markus Dopler, Stefan Schörgenhumer(C#); d3x0r(JS)",
+  "license": "ISC",
+  "description": ""
+}
