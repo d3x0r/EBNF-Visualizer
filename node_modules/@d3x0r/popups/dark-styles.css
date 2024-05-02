@@ -412,7 +412,7 @@ button {
 	font-size:200%;
 }
 
-.popup{
+[class^="popup-menu"]{
 	visibility:hidden;
 	/*right:0;*/
         top:48px;
@@ -427,19 +427,19 @@ button {
 	border-style:solid;
 }
 /* Change the background color on mouse-over */
-.popup a:hover {
+[class^="popup-menu"] a:hover {
   background-color: #ddd;
   color: black;
   text-decoration:underline;
 }
 
-.popup a {
+[class^="popup-menu"] a {
   background-color: #555;
   color: white;
 }
 
 /* Style the active/current link*/
-.popup a.active {
+[class^="popup-menu"] a.active {
   background-color: dodgerblue;
   color: white;
 }
@@ -447,6 +447,8 @@ button {
 div.mouseCatcher{
     width: 100%;
     height:100%;
+		top:0;
+		left:0;
     position:absolute;
     z-index : 45; /* under popup zindex; over all else */
     visibility: hidden;

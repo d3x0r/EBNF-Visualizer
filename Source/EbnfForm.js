@@ -168,6 +168,7 @@ Quote = "'" a "'".`
 
 		let i;
 		let insert;
+		this.menu.reset();
 		Symbol.nonterminals.forEach( s=>{
 			this.menu.addItem( s.name, ()=> {
 				this.SetCurrentSymbol( s );
@@ -271,8 +272,10 @@ Quote = "'" a "'".`
 	///////////////////////////////////////////////////////////////////////////////
 	
 	static WriteLine( s) {
-
-		form.textBoxOutput.textContent += (""+new Date() + ": " +s+"\r\n");
+	const msg =  ""+new Date() + ": " +s
+		const span = document.createElement( "div" );
+		span.textContent = msg;
+		form.textBoxOutput.appendChild( span) ;
 	}
 
 	///////////////////////////////////////////////////////////////////////////////
