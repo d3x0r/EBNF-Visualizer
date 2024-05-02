@@ -18,7 +18,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 -------------------------------------------------------------------------*/
 
-import {popups} from "/popups.mjs";
+import {popups} from "/node_modules/@d3x0r/popups/popups.mjs";
 popups.utils.preAddPopupStyles( document.head, location.href )
 import {Node,Symbol} from "./Graph.js"
 import {Scanner} from "./Scanner.js"
