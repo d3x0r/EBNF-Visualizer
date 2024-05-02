@@ -227,25 +227,30 @@ export class Node {
 	//static g						= EbnfForm.BitmapGraphics;  // the graphics object from the EBNFForm on witch the drawing takes place
 	
 	static set CharFont(value) {
-			charFont=value;
-			Node.#fontHeight=Node.#charFont.Height+Node.#symbolGapHeight;
+			Node.#charFont=value;
+			Node.ctx.font = value;
+			//let fontHeight = metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent;
+			//let actualHeight = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
+			const metrics = Node.ctx.measureText( "M" );
+			let fontHeight = metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent;
+			Node.#fontHeight=fontHeight+Node.#symbolGapHeight;
 		}
 	static get CharFont() {
 			return Node.#charFont;
 	}
 	
 	static set CharColor(value)  {
-			charColor=value;
+		Node.#charColor=value;
 		}
 	static get CharColor()  {
-			return charColor;
+			return Node.#charColor;
 	}
 	
 	static set ArrowSize(value)  {
-			arrowSize=value;
+		Node.#arrowSize=value;
 		}
 	static get ArrowSize()  {
-			return arrowSize;
+			return Node.#arrowSize;
 	}
 	
 	static set OptimizeGraph(value)  {
@@ -264,10 +269,10 @@ export class Node {
 	
 	static set ComponentGapHeight(value)  {
 			Node.#componentGapHeight=value;
-			if(Node.#componentGapHeight/2+Node.#fontHeight/2<defaultComponentArcSize)
+			if(Node.#componentGapHeight/2+Node.#fontHeight/2<Node.#defaultComponentArcSize)
 				Node.#componentArcSize=(Node.#componentGapHeight+Node.#fontHeight)/2;
 			else
-				Node.#componentArcSize=defaultComponentArcSize;
+				Node.#componentArcSize=Node.#defaultComponentArcSize;
 			if(Node.#componentArcSize%2!=0) Node.#componentArcSize-=1;
 		}
 	static get ComponentGapHeight()  {
@@ -614,8 +619,8 @@ export class Node {
 			//let curvePoints = [arrowHead,arrowLeft,arrowRight];
 			Node.ctx.beginPath();
 			Node.ctx.moveTo(arrowHead.X, arrowHead.Y);
-			Node.ctx.lineTo(arrowLeft.X, arrowLeft.Y);
 			Node.ctx.lineTo(arrowRight.X, arrowRight.Y);
+			Node.ctx.lineTo(arrowLeft.X, arrowLeft.Y);
 			Node.ctx.closePath();
 			Node.ctx.fill();
 			//g.FillPolygon(pen.Brush, curvePoints);
@@ -686,7 +691,7 @@ export class Node {
 		Node.ctx.beginPath();
 		Node.ctx.fillStyle = color;
 		Node.ctx.font = font;
-		Node.ctx.fillText( s, rect.X, rect.Y+rect.Height);
+		Node.ctx.fillText( s, rect.X + 2, rect.Y+rect.Height-Node.#symbolGapHeight);
 		Node.ctx.stroke();
 }
 

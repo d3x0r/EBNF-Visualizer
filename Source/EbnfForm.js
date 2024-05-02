@@ -23,6 +23,7 @@ popups.utils.preAddPopupStyles( document.head, location.href )
 import {Node,Symbol} from "./Graph.js"
 import {Scanner} from "./Scanner.js"
 import {Parser} from "./Parser.js"
+import {SettingsForm} from "./SettingsForm.js"
 
 export class EbnfForm 	{
 
@@ -34,6 +35,8 @@ export class EbnfForm 	{
 	
 	constructor()	{
 		this.menu.show();
+		this.settings = new SettingsForm( );
+		
 		loadFile.addEventListener('click', ()=> {
 			const form = popups.simpleForm( "Paste EBNF", "EBNF", `Rule1 = begin [optional things] end.
 Rule2 = begin {and again} end.
