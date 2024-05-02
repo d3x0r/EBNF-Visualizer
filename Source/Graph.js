@@ -574,6 +574,7 @@ export class Node {
 				//Node.#g=vg;
 				//vg.fillStyle = "white";
 				vg.clearRect( 0, 0, Node.#symbolSize.Width, Node.#symbolSize.Height);
+				vg.lineWidth = 2;
 				Node.ctx = vg;
 				//g.FillRectangle(new SolidBrush(Color.White),0,0,symbolSize.Width,symbolSize.Height);
 			}
