@@ -1,0 +1,20 @@
+
+.popupInputField{
+ width:80vw;
+height:60vh;
+font-size:unset;
+font-family:monospace;
+}
+
+button{
+	color:black;
+}
+.popup-menu{
+	display:flex;
+	position:unset;
+}
+.popup-item {
+	margin-left:20px;
+	margin-right:0;
+}
+
