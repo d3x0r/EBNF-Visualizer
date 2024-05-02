@@ -14,6 +14,7 @@ export class SettingsForm extends Popup {
         popups.makeTextInput( this, Node, "ComponentGapWidth", "Component Gap Width", false,false, true );
         popups.makeTextInput( this, Node, "ComponentGapHeight", "Component Gap Height", false,false, true );
         popups.makeTextInput( this, Node, "LinePen", "Line Color", false,false, false );
+			this.center();
     }
     
 }
