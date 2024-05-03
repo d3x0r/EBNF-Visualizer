@@ -18,6 +18,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 -------------------------------------------------------------------------*/
 
+import {form} from "./EbnfForm.js"
 
 class Point{
 	constructor(x,y){
@@ -33,8 +34,13 @@ class PointF{
 }
 class Size{
 	constructor(x,y){
+		if( x instanceof Size){
+			this.Width=x.Width;
+			this.Height=x.Height;
+		}else {
 		this.Width=x || 0;
 		this.Height=y || 0;
+		}
 	}	
 }
 class Rectangle{
@@ -115,6 +121,11 @@ export class Node {
 	constructor( a, b ) {
 		if( a instanceof Symbol ){
 			this.typ = a.typ; this.sym = a; 
+
+			const metric = Node.ctx.measureText( this.sym.name );
+			this.size.Height =Node.#fontHeight+Node.#componentGapHeight;
+			this.size.Width = metric.width+Node.#fontHeight/3;//g.MeasureString(n.sym.name,charFont).Width+Node.#fontHeight/3;
+
 			this.n = Node.nodes.length;
 			Node.nodes.push(this);
 		}else if( typeof a === 'number' && b instanceof Node ){
@@ -188,32 +199,38 @@ export class Node {
 	//----------------- for drawing ----------------------
 	
 	/**************default Settings**********************/
-	static #showBorders				= false;					// show the rectangles around the components
+	static showBorders				= false;					// show the rectangles around the components
 	
 	static  #defaultComponentArcSize	= 16;
 	static  #defaultComponentGapWidth  	= 32;
 	static  #defaultComponentGapHeight 	= 10;
-	static  #defaultCharFont			= "20px mono";
+	static  #defaultTitleFont			= "40px monospace";
+	static  #defaultCharFont			= "32px monospace";
 	static  #defaultArrowSize			= 3;
 	static  #defaultLinePen				= "#000";//new Pen(Color.Black,1);
-	static  #defaultSymbolGapHeight 	= 0;
+	static  #defaultSymbolGapHeight 	= 10;
+	static  #defaultSymbolGapWidth 	= 10;
 	static  #defaultCharColor			= "black";//Color.Black;
 	static #defaultFontHeight = 20;
+	static #defaultFontDescent = 2;
 	
 	/**********initialize variables with default settings***********/
 	static  #componentArcSize 	= Node.#defaultComponentArcSize;			// size of the arcs
 	static  #componentGapWidth 	= Node.#defaultComponentGapWidth;			// gap between subcomponent size and actual size
 	static  #componentGapHeight	= Node.#defaultComponentGapHeight;		// gap between subcomponent size and actual size
+	static  #titleFont			= Node.#defaultTitleFont;					// font of the t and nt symbols
 	static  #charFont			= Node.#defaultCharFont;					// font of the t and nt symbols
 	static  #arrowSize			= Node.#defaultArrowSize;					// size of the arrows
 	static  #linePen			= Node.#defaultLinePen;					// color and thickness of the line
 	static  #symbolGapHeight 	= Node.#defaultSymbolGapHeight;			// gap between the line of the symbol and the font
+	static  #symbolGapWidth 	= Node.#defaultSymbolGapWidth;			// gap between the line of the symbol and the font
 	static  #charColor			= Node.#defaultCharColor;					// fontColor of the T and NT symbols (fill style)
 	static #fontHeight			= Node.#defaultFontHeight;		// needed to make the gap between the symbol and and the font possible
+	static #fontDescent			= Node.#defaultFontDescent;		// needed to make the gap between the symbol and and the font possible
 	static #optimizeGraph		= true;								// enable optimizations?
 	
 	/*****************other variables needed for the drawing********/
-	size 		= new Size(0,0);			// the required size to draw the node
+	size 		= new Size(0,Node.#fontHeight+Node.#componentGapHeight);			// the required size to draw the node
 	altSize 	= new Size(0,0);			// the required size to draw a construct of alts or the size of the firstcomponent in the special rerun-node (itergraph!=null) 
 	iterSize 	= new Size(0,0);			// the size of the second component in the special rerun Node (itergraph!=null)
 		posBegin 	= new PointF(0,0);			// the point in the left above corner of the component
@@ -225,20 +242,45 @@ export class Node {
 	static canvas = document.createElement("canvas");
 	static ctx = Node.canvas.getContext("2d");
 	//static g						= EbnfForm.BitmapGraphics;  // the graphics object from the EBNFForm on witch the drawing takes place
-	
+
+	static setupFont() {
+		Node.ctx.font = Node.#charFont;
+		const metrics = Node.ctx.measureText( "M" );
+		Node.#fontDescent = metrics.actualBoundingBoxDescent;
+		let fontHeight = metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent;
+		Node.#fontHeight=fontHeight+Node.#symbolGapHeight;
+
+		Node.ctx.font = Node.#titleFont;
+		const metrics_t = Node.ctx.measureText( "M" );
+		Node.#beginningYCoordinate = metrics_t.fontBoundingBoxAscent + metrics_t.fontBoundingBoxDescent + 10;
+		
+	}
+
 	static set CharFont(value) {
 			Node.#charFont=value;
 			Node.ctx.font = value;
 			//let fontHeight = metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent;
 			//let actualHeight = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
 			const metrics = Node.ctx.measureText( "M" );
+			Node.#fontDescent = metrics.actualBoundingBoxDescent;
 			let fontHeight = metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent;
 			Node.#fontHeight=fontHeight+Node.#symbolGapHeight;
+
+			form.drawGrammar();
 		}
 	static get CharFont() {
 			return Node.#charFont;
 	}
 	
+	static set TitleFont(value) {
+			Node.#titleFont=value;
+			Node.setupFont();
+		}
+	static get TitleFont() {
+			return Node.#titleFont;
+	}
+	
+
 	static set CharColor(value)  {
 		Node.#charColor=value;
 		}
@@ -248,6 +290,7 @@ export class Node {
 	
 	static set ArrowSize(value)  {
 		Node.#arrowSize=value;
+		form.drawGrammar();
 		}
 	static get ArrowSize()  {
 			return Node.#arrowSize;
@@ -255,6 +298,7 @@ export class Node {
 	
 	static set OptimizeGraph(value)  {
 		Node.#optimizeGraph=value;
+		form.drawGrammar();
 		}
 	static get OptimizeGraph()  {
 			return Node.#optimizeGraph;
@@ -262,9 +306,17 @@ export class Node {
 	
 	static set SymbolGapHeight(value)  {
 			Node.#symbolGapHeight=value;
+			form.drawGrammar();
 		}
 	static get SymbolGapHeight()  {
 			return Node.#symbolGapHeight;
+	}
+	static set SymbolGapWidth(value)  {
+			Node.#symbolGapWidth=value;
+			form.drawGrammar();
+		}
+	static get SymbolGapWidth()  {
+			return Node.#symbolGapWidth;
 	}
 	
 	static set ComponentGapHeight(value)  {
@@ -274,6 +326,7 @@ export class Node {
 			else
 				Node.#componentArcSize=Node.#defaultComponentArcSize;
 			if(Node.#componentArcSize%2!=0) Node.#componentArcSize-=1;
+			form.drawGrammar();
 		}
 	static get ComponentGapHeight()  {
 			return Node.#componentGapHeight;
@@ -281,6 +334,8 @@ export class Node {
 	
 	static  set ComponentGapWidth(value)  {
 		Node.#componentGapWidth=value;
+		form.drawGrammar();
+
 	}
 	static  get ComponentGapWidth()  {
 		return Node.#componentGapWidth;
@@ -305,10 +360,15 @@ export class Node {
 		Node.#arrowSize			= Node.#defaultArrowSize;					// size of the arrows
 		Node.#linePen				= Node.#defaultLinePen;			// color and thickness of the line
 		Node.#symbolGapHeight 	= Node.#defaultSymbolGapHeight;			// gap between the line of the symbol and the font
+		Node.#symbolGapWidth 	= Node.#defaultSymbolGapWidth;			// gap between the line of the symbol and the font
 		Node.#charColor			= Node.#defaultCharColor;					// fontColor of the T and NT symbols
-		console.log( "Hard coded height" );
 
-		Node.#fontHeight		= 13;//Node.#defaultCharFont.Height;		// needed to make the gap between the symbol and and the font possible
+		Node.ctx.font = Node.#charFont;
+		const metrics = Node.ctx.measureText( "M" );
+		Node.#fontDescent = metrics.actualBoundingBoxDescent;
+		let fontHeight = metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent;
+		Node.#fontHeight=fontHeight+Node.#symbolGapHeight;
+
 		Node.#optimizeGraph		= true;
 	}
 	
@@ -401,7 +461,7 @@ export class Node {
 			else if(n.typ==Node.rerun)	{	
 				n.size=n.sub.calcSize();
 				if(n.itergraph!=null) {
-					n.altSize=n.size;
+					n.altSize=new Size( n.size );
 					if(n.size.Width<n.itergraph.calcSize().Width)
 						n.size.Width=n.itergraph.calcSize().Width;
 					n.size.Height+=n.itergraph.calcSize().Height;
@@ -585,12 +645,13 @@ export class Node {
 			}
 			//else g=EbnfForm.BitmapGraphics;
 
-			let p=new PointF(Node.#beginningXCoordinate,Node.#beginningYCoordinate-30);
-			//g.DrawString(s.name,new Font("Times New Roman",14),new SolidBrush(Color.Black),p.X-20,p.Y);
 			Node.ctx.beginPath();
 			Node.ctx.fillStyle = "black";
-			Node.ctx.font = "14px Times New Roman";
-			Node.ctx.fillText( s.name, p.X-20, p.Y);
+			Node.ctx.font = Node.#titleFont;
+
+			let p=new PointF(Node.#beginningXCoordinate,Node.#beginningYCoordinate-10);
+			//g.DrawString(s.name,new Font("Times New Roman",14),new SolidBrush(Color.Black),p.X-20,p.Y);
+			Node.ctx.fillText( s.name, p.X-20, p.Y );
 			////Node.DrawRectangle(new Pen(Color.Orange,2),p.X,p.Y+30,s.graph.graphSize.Width,s.graph.graphSize.Height);
 			//Node.ctx.strokeStyle = Graph.#lightPen;
 			Node.ctx.moveTo(Node.#beginningXCoordinate-Node.#componentGapWidth/4-Node.#componentArcSize/2 	, s.graph.l.posLine.Y  );
@@ -691,7 +752,7 @@ export class Node {
 		Node.ctx.beginPath();
 		Node.ctx.fillStyle = color;
 		Node.ctx.font = font;
-		Node.ctx.fillText( s, rect.X + 2, rect.Y+rect.Height-Node.#symbolGapHeight);
+		Node.ctx.fillText( s, rect.X +Node.#symbolGapWidth, rect.Y+rect.Height-Node.#symbolGapHeight-Node.#fontDescent);
 		Node.ctx.stroke();
 }
 
@@ -703,7 +764,7 @@ export class Node {
 		while(n!=null && samelevel)	{
 			
 			if(n.typ==Node.t || n.typ==Node.nt) {
-				if(Node.#showBorders) {
+				if(Node.showBorders) {
 					
 					Node.DrawRectangle("Palegreen",p.X,n.posBegin.Y-Node.#componentGapHeight/2,n.size.Width,n.size.Height);
 				}
@@ -742,13 +803,13 @@ export class Node {
 				}
 			}
 			else if(n.typ==Node.eps) {
-				if(Node.#showBorders) Node.DrawRectangle("DarkKhaki",p.X,n.posBegin.Y,n.size.Width,n.size.Height);
+				if(Node.showBorders) Node.DrawRectangle("DarkKhaki",p.X,n.posBegin.Y,n.size.Width,n.size.Height);
 				
 				Node.DrawLine(Node.#linePen , p.X , n.posLine.Y , p.X+n.size.Width , n.posLine.Y);
 
 			}
 			else if(n.typ==Node.opt)	{
-				if(Node.#showBorders) Node.DrawRectangle("DarkKhaki",p.X,n.posBegin.Y,n.size.Width,n.size.Height);
+				if(Node.showBorders) Node.DrawRectangle("DarkKhaki",p.X,n.posBegin.Y,n.size.Width,n.size.Height);
 				
 				// the two short lines at the beginning and the end
 				Node.DrawLine(Node.#linePen , p.X				, n.posLine.Y , p.X				+Node.#componentGapWidth	, n.posLine.Y);
@@ -769,7 +830,7 @@ export class Node {
 				p.X+=n.size.Width;
 			}
 			else if(n.typ==Node.rerun&&n.itergraph==null)	{
-				if(Node.#showBorders) Node.DrawRectangle("green",p.X,n.posBegin.Y,n.size.Width,n.size.Height);
+				if(Node.showBorders) Node.DrawRectangle("green",p.X,n.posBegin.Y,n.size.Width,n.size.Height);
 				
 				// the two short lines at the beginning and the end
 				Node.DrawLine(Node.#linePen , p.X				, n.posLine.Y , p.X					+Node.#componentGapWidth	, n.posLine.Y);
@@ -790,7 +851,7 @@ export class Node {
 				p.X+=n.size.Width;
 			}
 			else if(n.typ==Node.rerun&&n.itergraph!=null) {
-				if(Node.#showBorders) Node.DrawRectangle("Fuchsia",p.X,n.posBegin.Y,n.size.Width,n.size.Height);
+				if(Node.showBorders) Node.DrawRectangle("Fuchsia",p.X,n.posBegin.Y,n.size.Width,n.size.Height);
 
 				// the two short lines at the beginning and the end of the first Node.#component
 				Node.DrawLine(Node.#linePen , p.X													, n.posLine.Y , p.X + n.size.Width/2-n.altSize.Width/2-1	, n.posLine.Y);
@@ -812,7 +873,7 @@ export class Node {
 				p.X+=n.size.Width;				
 			}
 			else if(n.typ==Node.iter)	{	
-				if(Node.#showBorders) Node.DrawRectangle("DarkViolet",p.X,n.posBegin.Y,n.size.Width,n.size.Height);
+				if(Node.showBorders) Node.DrawRectangle("DarkViolet",p.X,n.posBegin.Y,n.size.Width,n.size.Height);
 				
 				// the quarter Arcs
 				Node.DrawArc( Node.#linePen , p.X + Node.#componentGapWidth/4 +Node.#componentArcSize/2					, n.sub.posLine.Y-Node.#componentArcSize	, Node.#componentArcSize , Node.#componentArcSize ,  90 , 90);
@@ -852,7 +913,7 @@ export class Node {
 				p.X=Node.#beginningXCoordinate;
 			}
 			else if(n.typ==Node.alt)	{			
-				if(Node.#showBorders) Node.DrawRectangle("Red",p.X,n.posBegin.Y,n.altSize.Width,n.altSize.Height);
+				if(Node.showBorders) Node.DrawRectangle("Red",p.X,n.posBegin.Y,n.altSize.Width,n.altSize.Height);
 				
 				// the two short lines at the beginning and the end of the altNode.#component
 				Node.DrawLine(	Node.#linePen , p.X				 		, n.posLine.Y , p.X					+Node.#componentArcSize*3/2		, n.posLine.Y	);
@@ -905,7 +966,7 @@ export class Node {
 		while(n!=null && samelevel)	{
 			p.X-=n.size.Width;
 			if(n.typ==Node.t || n.typ==Node.nt) {
-				if(Node.#showBorders) Node.DrawRectangle("PaleGreen",p.X,n.posBegin.Y-Node.#componentGapHeight/2,n.size.Width,n.size.Height);
+				if(Node.showBorders) Node.DrawRectangle("PaleGreen",p.X,n.posBegin.Y-Node.#componentGapHeight/2,n.size.Width,n.size.Height);
 				if(n.typ==Node.t) {
 					// the quarter Arcs
 					Node.DrawArc( Node.#linePen , p.X													, n.posBegin.Y	, (n.size.Height-Node.#componentGapHeight)/2 , (n.size.Height-Node.#componentGapHeight)/2 , 180 , 90);
@@ -942,13 +1003,13 @@ export class Node {
 				}
 			}
 			else if(n.typ==Node.eps)	{
-				if(Node.#showBorders) Node.DrawRectangle("DarkKhaki",p.X,n.posBegin.Y,n.size.Width,n.size.Height);
+				if(Node.showBorders) Node.DrawRectangle("DarkKhaki",p.X,n.posBegin.Y,n.size.Width,n.size.Height);
 				
 				Node.DrawLine(Node.#linePen , p.X , n.posLine.Y , p.X + n.size.Width , n.posLine.Y);
 
 			}
 			else if(n.typ==Node.opt)	{
-				if(Node.#showBorders) Node.DrawRectangle("DarkKhaki",p.X,n.posBegin.Y,n.size.Width,n.size.Height);
+				if(Node.showBorders) Node.DrawRectangle("DarkKhaki",p.X,n.posBegin.Y,n.size.Width,n.size.Height);
 
 				// the two short lines at the beginning and the end
 				Node.DrawLine(Node.#linePen , p.X				, n.posLine.Y , p.X				+Node.#componentGapWidth	, n.posLine.Y);
@@ -969,7 +1030,7 @@ export class Node {
 			}			
 			
 			else if(n.typ==Node.rerun && n.itergraph==null)	{
-				if(Node.#showBorders) Node.DrawRectangle("green",p.X,n.posBegin.Y,n.size.Width,n.size.Height);
+				if(Node.showBorders) Node.DrawRectangle("green",p.X,n.posBegin.Y,n.size.Width,n.size.Height);
 
 				// the two short lines at the beginning and the end
 				Node.DrawLine(Node.#linePen , p.X				, n.posLine.Y , p.X					+Node.#componentGapWidth	, n.posLine.Y);
@@ -989,7 +1050,7 @@ export class Node {
 				n.sub.drawComponentsInverse(p1,n.size);
 			}
 			else if(n.typ==Node.rerun&&n.itergraph!=null) {
-				if(Node.#showBorders) Node.DrawRectangle("Fuchsia",p.X,n.posBegin.Y,n.size.Width,n.size.Height);
+				if(Node.showBorders) Node.DrawRectangle("Fuchsia",p.X,n.posBegin.Y,n.size.Width,n.size.Height);
 
 				// the two short lines at the beginning and the end of the first Node.#component
 				Node.DrawLine(Node.#linePen , p.X													, n.posLine.Y , p.X + n.size.Width/2-n.altSize.Width/2-1, n.posLine.Y);
@@ -1011,7 +1072,7 @@ export class Node {
 			
 			}
 			else if(n.typ==Node.iter)	{	
-				if(Node.#showBorders) Node.DrawRectangle("DarkViolet",p.X,n.posBegin.Y,n.size.Width,n.size.Height);
+				if(Node.showBorders) Node.DrawRectangle("DarkViolet",p.X,n.posBegin.Y,n.size.Width,n.size.Height);
 				
 				// the quarter Arcs
 				Node.DrawArc( Node.#linePen , p.X + Node.#componentGapWidth/4 +Node.#componentArcSize/2					, n.sub.posLine.Y-Node.#componentArcSize	, Node.#componentArcSize , Node.#componentArcSize ,  90 , 90);
@@ -1032,7 +1093,7 @@ export class Node {
 			}
 			else if(n.typ==Node.alt)	{			
 				p.X-=n.altSize.Width-n.size.Width;
-				if(Node.#showBorders) Node.DrawRectangle("Red",p.X,n.posBegin.Y,n.altSize.Width,n.altSize.Height);
+				if(Node.showBorders) Node.DrawRectangle("Red",p.X,n.posBegin.Y,n.altSize.Width,n.altSize.Height);
 				
 				// the two short lines at the beginning and the end of the altNode.#component
 				Node.DrawLine(	Node.#linePen , p.X				 		, n.posLine.Y , p.X					+Node.#componentArcSize*3/2		, n.posLine.Y	);
@@ -1630,3 +1691,4 @@ export class Graph {
 		
 }
 
+Node.setupFont();

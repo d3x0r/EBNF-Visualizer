@@ -36,7 +36,11 @@ export class EbnfForm 	{
 	constructor()	{
 		this.menu.show();
 		this.settings = new SettingsForm( );
-		
+		this.settings.hide();
+		showSettings.addEventListener('click', ()=> {
+			this.settings.show();
+			this.settings.center();
+		} );
 		loadFile.addEventListener('click', ()=> {
 			const form = popups.simpleForm( "Paste EBNF", "EBNF", `Rule1 = begin [optional things] end.
 Rule2 = begin {and again} end.
@@ -80,7 +84,9 @@ Quote = "'" a "'".`
 	///////////////////////////////////////////////////////////////////////////////
 	
 	paint() {
-		Node.drawComponent(this.currentSymbol);
+		if( this.currentSymbol ) {
+			Node.drawComponent(this.currentSymbol, this.canvas,this.ctx );
+		}
 		//let xGraph;
 		//xGraph = e.Graphics;
 		//xGraph.DrawImage(DrawArea,0,0,DrawArea.Width,DrawArea.Height);
@@ -89,10 +95,6 @@ Quote = "'" a "'".`
 	drawGrammar()	{
 		EbnfForm.InitializeDrawArea();
 		Node.calcDrawing();
-		if( this.currentSymbol ) {
-
-			Node.drawComponent(this.currentSymbol, this.canvas,this.ctx );
-		}
 		//this.Refresh();
 	}
 
@@ -114,7 +116,7 @@ Quote = "'" a "'".`
 		//menuItemCopy.Enabled=true;
 		this.currentSymbol=s;//Symbol.Find(temp.Text);
 		EbnfForm.rulehistory.push(this.currentSymbol);
-		this.drawGrammar();
+		this.paint();
 		EbnfForm.WriteLine("Switched to rule: "+this.currentSymbol.name+".");
     }
 	
@@ -227,7 +229,7 @@ Quote = "'" a "'".`
 	}
 	SwitchToRule( s) {
 		this.currentSymbol=s;			
-		drawGrammar();
+		paint();
 		//EbnfForm.WriteLine("Switched to rule: "+s.name+".");
 		//foreach(MenuItem mi in menuItemRules.MenuItems)	{			
 		//	mi.Checked=false;	
@@ -288,4 +290,4 @@ Quote = "'" a "'".`
 }
 
 //Node.trace=true;
-const form = new EbnfForm();
+export const form = new EbnfForm();

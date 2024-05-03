@@ -16,5 +16,7 @@ button{
 .popup-item {
 	margin-left:20px;
 	margin-right:0;
+	font-size:150%;
+	font-family:monospace;
 }
 
