@@ -427,19 +427,19 @@ button {
 	border-style:solid;
 }
 /* Change the background color on mouse-over */
-a[class^="popup-menu"]hover {
+a[class^="popup-item"]:hover {
   background-color: #ddd;
   color: black;
   text-decoration:underline;
 }
 
-a[class^="popup-menu"] {
+a[class^="popup-item"] {
   background-color: #555;
   color: white;
 }
 
 /* Style the active/current link*/
-a[class^="popup-menu"]:active {
+a[class^="popup-item"]:active {
   background-color: dodgerblue;
   color: white;
 }
