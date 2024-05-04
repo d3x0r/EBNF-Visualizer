@@ -25,13 +25,7 @@ import {Scanner} from "./Scanner.js"
 import {Parser} from "./Parser.js"
 import {SettingsForm} from "./SettingsForm.js"
 
-if( location.search ) {
-	await fetch( location.search ).then( async resp=>{
-		last_content = await resp.text();
-	} );
-}
-
-let last_content = location.search || `Rule1 = begin [optional things] end.
+let last_content = `Rule1 = begin [optional things] end.
 Rule2 = begin {and again} end.
 Rule3 = I am a (good | bad) programmer.
 Linebreak = First line \n Second line \n End.
@@ -40,6 +34,13 @@ Optimize2 = ab { cd ab}.
 Quote = "'" a "'".
 NothingOr =  (|"whitespace").
 `;
+
+if( location.search ) {
+	await fetch( location.search ).then( async resp=>{
+		last_content = await resp.text();
+	} );
+}
+
 function defaultFile() {
 	return last_content;
 }
