@@ -42,8 +42,8 @@ export class EbnfForm 	{
 			this.settings.center();
 		} );
 		loadFile.addEventListener('click', ()=> {
-			if( form ) {
-				form.show(); return;
+			if( this.form ) {
+				this.form.show(); return;
 			}
 			this.form = popups.simpleForm( "Paste EBNF", "EBNF", `Rule1 = begin [optional things] end.
 Rule2 = begin {and again} end.
