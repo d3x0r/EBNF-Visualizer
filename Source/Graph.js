@@ -128,7 +128,7 @@ export class Node {
 
 			this.n = Node.nodes.length;
 			Node.nodes.push(this);
-		}else if( typeof a === 'number' && b instanceof Node ){
+		}else if( typeof a === 'number' && (b === null || b instanceof Node) ){
 			this.typ = a; 
 			this.n = Node.nodes.length;
 			Node.nodes.push(this);

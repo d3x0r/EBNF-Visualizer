@@ -31,9 +31,11 @@ Rule3 = I am a (good | bad) programmer.
 Linebreak = First line \n Second line \n End.
 Optimize1 = ab {ab}.
 Optimize2 = ab { cd ab}.
-Quote = "'" a "'".`;
+Quote = "'" a "'".
+NothingOr =  (|"whitespace").
+`;
 function defaultFile() {
-	return lastContent;
+	return last_content;
 }
 
 export class EbnfForm 	{
