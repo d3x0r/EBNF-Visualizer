@@ -45,7 +45,7 @@ export class EbnfForm 	{
 			if( this.form ) {
 				this.form.show(); return;
 			}
-			this.form = popups.simpleForm( "Paste EBNF", "EBNF", `Rule1 = begin [optional things] end.
+			const form = this.form = popups.simpleForm( "Paste EBNF", "EBNF", `Rule1 = begin [optional things] end.
 Rule2 = begin {and again} end.
 Rule3 = I am a (good | bad) programmer.
 Linebreak = First line \n Second line \n End.
