@@ -652,7 +652,11 @@ function createSimpleForm( title, question, defaultValue, ok, cancelCb ) {
 	var input = document.createElement( "textarea" );
 	input.className = "popupInputField";
 	input.setAttribute( "size", 45 );
-	input.value = defaultValue;
+		if( "function" === typeof defaultValue ){
+			input.value = defaultValue();
+		}
+		else
+			input.value = defaultValue;
 
 	var okay = document.createElement( "BUTTON" );
 	okay.className = "popupOkay";
