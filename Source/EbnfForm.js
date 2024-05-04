@@ -36,7 +36,7 @@ NothingOr =  (|"whitespace").
 `;
 
 if( location.search ) {
-	await fetch( location.search ).then( async resp=>{
+	await fetch( location.search.substring(1) ).then( async resp=>{
 		last_content = await resp.text();
 	} );
 }
