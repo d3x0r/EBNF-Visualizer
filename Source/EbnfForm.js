@@ -88,13 +88,12 @@ export class EbnfForm 	{
 		//this.paint();
 		// get string from somewhere...
 		if( location.search ) {
-			await fetch( location.search.substring(1), { mode: 'cors'} ).then( async resp=>{
-				auto_load = true;
+			fetch( location.search.substring(1), { mode: 'cors'} ).then( async resp=>{
 				last_content = await resp.text();
+				this.LoadGrammar( last_content );
 			} );
 		}
 
-		if( auto_load ) 				this.LoadGrammar( last_content );
 
 	}
 
