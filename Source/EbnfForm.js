@@ -35,8 +35,11 @@ Quote = "'" a "'".
 NothingOr =  (|"whitespace").
 `;
 
+let auto_load = false;
+
 if( location.search ) {
 	await fetch( location.search.substring(1), { mode: 'cors'} ).then( async resp=>{
+		auto_load = true;
 		last_content = await resp.text();
 	} );
 }
@@ -73,6 +76,7 @@ export class EbnfForm 	{
 			}, ()=>{form.hide()} );
 			form.show();
 		} );
+
 		//this.AutoScaleBaseSize = new System.Drawing.Size(5, 13); 
 		//this.ClientSize = new System.Drawing.Size(800, 600);
 		//this.StartPosition = FormStartPosition.CenterScreen;
@@ -89,6 +93,8 @@ export class EbnfForm 	{
 
 		//this.paint();
 		// get string from somewhere...
+
+		if( auto_load ) 				this.LoadGrammar( last_content );
 
 	}
 
