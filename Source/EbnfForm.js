@@ -25,6 +25,17 @@ import {Scanner} from "./Scanner.js"
 import {Parser} from "./Parser.js"
 import {SettingsForm} from "./SettingsForm.js"
 
+let last_content = `Rule1 = begin [optional things] end.
+Rule2 = begin {and again} end.
+Rule3 = I am a (good | bad) programmer.
+Linebreak = First line \n Second line \n End.
+Optimize1 = ab {ab}.
+Optimize2 = ab { cd ab}.
+Quote = "'" a "'".`;
+function defaultFile() {
+	return lastContent;
+}
+
 export class EbnfForm 	{
 
 	 textBoxOutput	= document.createElement( "span" );
@@ -45,15 +56,10 @@ export class EbnfForm 	{
 			if( this.form ) {
 				this.form.show(); return;
 			}
-			const form = this.form = popups.simpleForm( "Paste EBNF", "EBNF", `Rule1 = begin [optional things] end.
-Rule2 = begin {and again} end.
-Rule3 = I am a (good | bad) programmer.
-Linebreak = First line \n Second line \n End.
-Optimize1 = ab {ab}.
-Optimize2 = ab { cd ab}.
-Quote = "'" a "'".`
+			const form = this.form = popups.simpleForm( "Paste EBNF", "EBNF", defaultFile
 			, (data)=> {
 				this.LoadGrammar( data );
+				last_content = data;
 				form.hide();
 			}, ()=>{form.hide()} );
 			form.show();
