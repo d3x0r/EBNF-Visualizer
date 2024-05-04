@@ -42,7 +42,10 @@ export class EbnfForm 	{
 			this.settings.center();
 		} );
 		loadFile.addEventListener('click', ()=> {
-			const form = popups.simpleForm( "Paste EBNF", "EBNF", `Rule1 = begin [optional things] end.
+			if( form ) {
+				form.show(); return;
+			}
+			this.form = popups.simpleForm( "Paste EBNF", "EBNF", `Rule1 = begin [optional things] end.
 Rule2 = begin {and again} end.
 Rule3 = I am a (good | bad) programmer.
 Linebreak = First line \n Second line \n End.
@@ -51,8 +54,8 @@ Optimize2 = ab { cd ab}.
 Quote = "'" a "'".`
 			, (data)=> {
 				this.LoadGrammar( data );
-				form.remove();
-			}, ()=>{form.remove()} );
+				form.hide();
+			}, ()=>{form.hide()} );
 			form.show();
 		} );
 		//this.AutoScaleBaseSize = new System.Drawing.Size(5, 13); 
