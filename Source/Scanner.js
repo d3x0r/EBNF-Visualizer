@@ -84,9 +84,9 @@ export class Scanner {
 	  static  noSym = 13;
 	static start = [
 	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	  0,  0,  2,  0,  0,  0,  0,  3, 10, 11,  0,  0,  0,  0,  8,  0,
-	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  7,  0,  0,
+	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, //16
+	  0,  0,  2,  0,  0,  0,  0,  3, 10, 11,  0,  0,  0,  0,  8,  0, //32
+	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  7,  0,  0, //48
 	  0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
 	  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1, 12,  5, 13,  0,  1,
 	  0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
@@ -178,7 +178,7 @@ export class Scanner {
 					else {t.kind = Scanner.noSym; break;}
 				case 3:
 					if ((Scanner.ch >= ' ' && Scanner.ch <= '&' || Scanner.ch >= '(' && Scanner.ch <= '~')) {buf+=(Scanner.ch); Scanner.NextCh(); state=3;break;}
-					else if (Scanner.ch == 39) {buf+=(Scanner.ch); Scanner.NextCh(); state=4;break;}
+					else if (Scanner.ch == "'") {buf+=(Scanner.ch); Scanner.NextCh(); state=4;break;}
 					else {t.kind = Scanner.noSym; break;}
 				case 4:
 					{t.kind = 2; break;}
