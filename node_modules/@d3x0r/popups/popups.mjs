@@ -2105,22 +2105,26 @@ function initMouseCatcher() {
 function createPopupMenu( opts ) {
 	const suffix = opts?.suffix||'';
 	let keepShow = false;
-
+	let closing = false;
 	function menuCloser() {
 		if( menu.lastShow ) {
 			if( keepShow ) {
 				menu.lastShow = 0;
 				keepShow = false;
+				closing = false;
 				return;
 			}
 			const now = Date.now();
 			if( ( now - menu.lastShow ) > 500 )  {
+				closing = false;
 				menu.lastShow = 0; // reset this, otherwise hide will just schedule this timer
 				if( menu.subOpen ) menu.subOpen.hide();
 				menu.hide();
 			}
-			if( menu.lastShow )
+			if( menu.lastShow ) {
 				setTimeout( menuCloser, 500 - ( now - menu.lastShow ) );
+				closing = true;
+			}
 		}
 	}
 
@@ -2212,8 +2216,8 @@ function createPopupMenu( opts ) {
 			}
 		},
 		show( x, y, cb ) {
-		    	if( this.parent )
-			    	this.parent.subOpen = this;
+			if( this.parent )
+				this.parent.subOpen = this;
 			menu.lastShow = Date.now();
 			//this.board = board;
 			menu.cb = cb;
@@ -2223,6 +2227,7 @@ function createPopupMenu( opts ) {
 			this.container.style.visibility = "inherit";
 			this.container.style.left = x;
 			this.container.style.top = y;
+			if( closing ) keepShow = true;
 		},
 		reset() {
 			this.hide(true);
