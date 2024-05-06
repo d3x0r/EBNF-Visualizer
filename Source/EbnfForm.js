@@ -68,6 +68,9 @@ export class EbnfForm 	{
 				last_content = data;
 				form.hide();
 			}, ()=>{form.hide()} );
+			popups.makeButton( form, "Apply", ()=>{
+				
+			} );
 			form.show();
 		} );
 

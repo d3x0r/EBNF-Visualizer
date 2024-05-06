@@ -173,7 +173,16 @@ export class Scanner {
 					if ((Scanner.ch >= '0' && Scanner.ch <= '9' || Scanner.ch >= 'A' && Scanner.ch <= 'Z' || Scanner.ch == '_' || Scanner.ch >= 'a' && Scanner.ch <= 'z')) {buf+=(Scanner.ch); Scanner.NextCh(); state=1;break;}
 					else {t.kind = 1; break;}
 				case 2:
-					if ((Scanner.ch >= ' ' && Scanner.ch <= '!' || Scanner.ch >= '#' && Scanner.ch <= '~')) {buf+=(Scanner.ch); Scanner.NextCh(); state=2;break;}
+					if (Scanner.ch == '\\') {  // \\ in double quotes, support simple escapes.
+						const escape = Scanner.ch;
+						Scanner.NextCh();
+						if( Scanner.ch === '"' ) buf += '"';
+						else if( Scanner.ch === '\\' ) buf += '\\';
+						else buf += escape + Scanner.ch;
+						Scanner.NextCh();
+						state=2;
+						break;
+					} else if ((Scanner.ch >= ' ' && Scanner.ch <= '!' || Scanner.ch >= '#' && Scanner.ch <= '~')) {buf+=(Scanner.ch); Scanner.NextCh(); state=2;break;}
 					else if (Scanner.ch == '"') {buf+=(Scanner.ch); Scanner.NextCh(); state=4;break;}
 					else {t.kind = Scanner.noSym; break;}
 				case 3:
