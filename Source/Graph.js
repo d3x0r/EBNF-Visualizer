@@ -203,10 +203,10 @@ export class Node {
 	
 	static  #defaultComponentArcSize	= 16;
 	static  #defaultComponentGapWidth  	= 32;
-	static  #defaultComponentGapHeight 	= 10;
+	static  #defaultComponentGapHeight 	= 15;
 	static  #defaultTitleFont			= "40px monospace";
 	static  #defaultCharFont			= "32px monospace";
-	static  #defaultArrowSize			= 3;
+	static  #defaultArrowSize			= 7;
 	static  #defaultLinePen				= "#000";//new Pen(Color.Black,1);
 	static  #defaultSymbolGapHeight 	= 10;
 	static  #defaultSymbolGapWidth 	= 10;

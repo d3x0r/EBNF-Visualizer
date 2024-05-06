@@ -6,6 +6,9 @@ export class SettingsForm extends Popup {
     constructor() {
         super( "Settings", null, {enableClose:true} );
         //popups.makeTextField( this, Node, "CharFont", "Font" );
+			const restart = document.createElement( "div" );
+			this.appendChild( restart );
+			restart.innerHTML= "Some settings changes require reloading the model.<br>  Many visual changes just require re-selecting<br> the model to draw from the loaded choices.<br>";
         popups.makeTextInput( this, Node, "TitleFont", "Title Font", false,false, false );
         popups.makeTextInput( this, Node, "CharFont", "Font", false,false, false );
         popups.makeTextInput( this, Node, "CharColor", "Color", false,false, false );
