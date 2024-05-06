@@ -202,8 +202,8 @@ export class Node {
 	static showBorders				= false;					// show the rectangles around the components
 	
 	static  #defaultComponentArcSize	= 16;
-	static  #defaultComponentGapWidth  	= 32;
-	static  #defaultComponentGapHeight 	= 15;
+	static  #defaultComponentGapWidth  	= 37;
+	static  #defaultComponentGapHeight 	= 12;
 	static  #defaultTitleFont			= "40px monospace";
 	static  #defaultCharFont			= "32px monospace";
 	static  #defaultArrowSize			= 7;
